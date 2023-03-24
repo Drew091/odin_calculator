@@ -32,5 +32,13 @@ function operate(operator,firstNumber,secondNumber) {
     case "*":
       return divide(firstNumber,secondNumber);
   }
+}
 
+function sendToDisplay(value){
+  displayValue = document.getElementById("displayValue").innerHTML;
+  if (displayValue == 0){
+    document.getElementById("displayValue").innerHTML = value;
+  }else{
+    document.getElementById("displayValue").innerHTML += value;
+  }
 }
