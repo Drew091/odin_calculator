@@ -12,9 +12,26 @@
       <div class= "calculator-top">
         <h1 class="text-design"> CALCULATOR </h1>
       </div>
+
       <div class= "calculator-display">
         <h2 id = displayValue text = 0>0</h2>
       </div>
+
+      <div class= "calculator-top-buttons">
+        <div class= "button calculator-buttons-clear">
+          <button type="button" onclick="sendToDisplay(this.value)"
+          value="CLEAR"> CLEAR </button>
+        </div>
+        <div class= "button calculator-buttons-divide">
+          <button type="button" onclick="sendToDisplay(this.value)"
+          value="/"> / </button>
+        </div>
+        <div class= "button calculator-buttons-multiply">
+          <button type="button" onclick="sendToDisplay(this.value)"
+          value="*"> x </button>
+        </div>
+      </div>
+
       <div class= "calculator-buttons">
         <div class= "button calculator-buttons-7">
           <button type="button" onclick="sendToDisplay(this.value)"
@@ -44,9 +61,9 @@
           <button type="button" onclick="sendToDisplay(this.value)"
           value=2> 2</button>
         </div>
-        <div class= "button calculator-buttons-multiply">
+        <div class= "button calculator-buttons-decimal">
           <button type="button" onclick="sendToDisplay(this.value)"
-          value="*"> x </button>
+          value="."> . </button>
         </div>
         <div class= "button calculator-buttons-9">
           <button type="button" onclick="sendToDisplay(this.value)"
@@ -60,9 +77,9 @@
           <button type="button" onclick="sendToDisplay(this.value)"
           value=3> 3 </button>
         </div>
-        <div class= "button calculator-buttons-divide">
+        <div class= "button calculator-buttons-delete">
           <button type="button" onclick="sendToDisplay(this.value)"
-          value="/"> / </button>
+          value="DEL"> DEL </button>
         </div>
         <div class= "button calculator-buttons-substract">
           <button type="button" onclick="sendToDisplay(this.value)"
