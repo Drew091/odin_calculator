@@ -6,6 +6,53 @@ let lastInput;
 let currentInput;
 let currentOperator = "";
 let lastOperator = "";
+let maxLength= 0;
+let upToNCharacters;
+let upToNCharactersDoubleCheck;
+
+const keyPress = document.body;
+keyPress.addEventListener("keydown", pressButton, false);
+
+function pressButton(key) {
+  let value;
+
+  const charCode = key.keyCode;
+  value = (String.fromCharCode(key.keyCode));
+  switch(true) {
+    case (charCode==13):
+      value ="=";
+      break;
+    case (charCode==107):
+      value ="+";
+      break;
+    case (charCode==109):
+      value ="-";
+      break;
+    case (charCode==111):
+      value ="/";
+      break;
+    case (charCode==106):
+      value ="*";
+      break;
+    case (charCode==110):
+      value =".";
+      break;
+    case (charCode==8):
+      value ="DEL";
+      break;
+    case (charCode==67):
+      value ="CLEAR";
+      break;
+    case (charCode>=96 || charCode==105):
+      value = charCode-96;
+  }
+  console.log(`charCode: ${charCode}\n`);
+  console.log(String.fromCharCode(key.keyCode));
+
+  console.log(typeof charCode);
+
+  sendToDisplay(value)
+}
 
 function add(a,b) {
   return a+b;
@@ -39,7 +86,28 @@ function operate(operator,firstNumber,secondNumber) {
   }
 }
 
+function calcMaxLength(){
+  upToNCharacters = document.getElementById("displayValue").innerHTML.substring(0, Math.min(document.getElementById("displayValue").innerHTML.length, maxLength));
+  if(upToNCharacters.includes(".")){
+    maxLength = 11;
+  }else{
+    maxLength = 10;
+  }
+}
+
+function displayMaxLength(){
+  upToNCharactersDoubleCheck = upToNCharacters.substring(0, Math.min(upToNCharacters.length, maxLength));
+  if(upToNCharactersDoubleCheck.length == maxLength && upToNCharactersDoubleCheck.slice(-1) == "."){
+  document.getElementById("displayValue").innerHTML = upToNCharactersDoubleCheck.slice(0, -1);
+  }else{
+  document.getElementById("displayValue").innerHTML = upToNCharactersDoubleCheck;
+  }
+}
+
 function sendToDisplay(value){
+
+   calcMaxLength();
+
   if (value == "CLEAR"){
     document.getElementById("displayValue").innerHTML = 0;
     displayValue = "0";
@@ -79,11 +147,14 @@ function sendToDisplay(value){
    displayValue = document.getElementById("displayValue").innerHTML;
    secondNumber = parseFloat(displayValue);
    firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
-   document.getElementById("displayValue").innerHTML = firstNumber ;
-   secondNumber = 0;
-   displayValue = "0";
+   document.getElementById("displayValue").innerHTML = firstNumber;
    lastOperator = "";
-   currentOperator = value;
+
+   if(value != "="){
+     secondNumber = 0;
+     displayValue = "0";
+     currentOperator = value;
+   }
    console.log("----------");
    console.log("1.5nd")
    console.log("firstNumber:");
@@ -216,7 +287,7 @@ function sendToDisplay(value){
     console.log(currentOperator);
     console.log("lastOperator:");
     console.log(lastOperator);
- }else if (parseFloat(displayValue) != secondNumber && (value >= 0 || value <10 )){
+ }else if (displayValue.length <= maxLength && parseFloat(displayValue) != secondNumber && (value >= 0 || value <10 )){
     document.getElementById("displayValue").innerHTML += value;
     displayValue = document.getElementById("displayValue").innerHTML;
     lastOperator = currentOperator;
@@ -287,7 +358,7 @@ function sendToDisplay(value){
       console.log(currentOperator);
       console.log("lastOperator:");
       console.log(lastOperator);
-    }else if (!displayValue.includes(".") && displayValue == "0" &&  value == "."){
+    }else if (!displayValue.includes(".") && firstNumber==0 && displayValue == "0" &&  value == "."){
        document.getElementById("displayValue").innerHTML += value;
        displayValue = document.getElementById("displayValue").innerHTML;
        lastOperator = currentOperator;
@@ -303,6 +374,23 @@ function sendToDisplay(value){
        console.log(currentOperator);
        console.log("lastOperator:");
        console.log(lastOperator);
-
+     }else if (!displayValue.includes(".") && displayValue == "0" &&  value == "."){
+        document.getElementById("displayValue").innerHTML = "0" + value;
+        displayValue = document.getElementById("displayValue").innerHTML;
+        lastOperator = currentOperator;
+        console.log("----------");
+        console.log("14th");
+        console.log("firstNumber:");
+        console.log(firstNumber);
+        console.log("secondNumber:");
+        console.log(secondNumber);
+        console.log("displayValue:");
+        console.log(displayValue);
+        console.log("currentOperator:");
+        console.log(currentOperator);
+        console.log("lastOperator:");
+        console.log(lastOperator);
   }
+  calcMaxLength();
+  displayMaxLength();
 }
