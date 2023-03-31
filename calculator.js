@@ -75,7 +75,7 @@ function sendToDisplay(value){
     console.log(currentOperator);
     console.log("lastOperator:");
     console.log(lastOperator);
- }else if (lastOperator != "" && (value == "+" || value == "-" || value == "/" || value == "*")){
+ }else if (lastOperator != "" && (value == "+" || value == "-" || value == "/" || value == "*"|| value == "=" )){
    displayValue = document.getElementById("displayValue").innerHTML;
    secondNumber = parseFloat(displayValue);
    firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
@@ -111,7 +111,7 @@ function sendToDisplay(value){
     console.log(currentOperator);
     console.log("lastOperator:");
     console.log(lastOperator);
-  }else if (value == "=" && firstNumber == 0 && secondNumber == 0){
+  }else if (value == "=" && currentOperator == "" && firstNumber == 0 && secondNumber == 0){
       document.getElementById("displayValue").innerHTML = parseFloat(displayValue);
       console.log("----------");
       console.log("3rd");
