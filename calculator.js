@@ -9,6 +9,7 @@ let lastOperator = "";
 let maxLength= 0;
 let upToNCharacters;
 let upToNCharactersDoubleCheck;
+let decimal;
 
 const keyPress = document.body;
 keyPress.addEventListener("keydown", pressButton, false);
@@ -92,6 +93,10 @@ function operate(operator,firstNumber,secondNumber) {
   }
 }
 
+function roundResult(number){
+  return Math.round(number*1000000000) / 1000000000;
+}
+
 function calcMaxLength(){
   console.log("calcMaxLength");
   upToNCharacters = document.getElementById("displayValue").innerHTML.substring(0, Math.min(document.getElementById("displayValue").innerHTML.length, maxLength));
@@ -121,11 +126,12 @@ function sendToDisplay(value){
 
   if (value == "CLEAR"){
     document.getElementById("displayValue").innerHTML = "0";
-    displayValue = 0;
+    displayValue = "0";
     currentOperator = "";
     lastOperator = "";
     firstNumber = 0;
     secondNumber = 0;
+    document.getElementById("displayValueMultiplier").innerHTML = null;
     console.log("----------");
     console.log("Clear");
     console.log("firstNumber:");
@@ -139,6 +145,7 @@ function sendToDisplay(value){
     console.log("lastOperator:");
     console.log(lastOperator);
   }else if (firstNumber == 0 && lastOperator == "" && (value == "+" || value == "-" || value == "/" || value == "*")){
+    displayValue = document.getElementById("displayValue").innerHTML;
     firstNumber = parseFloat(displayValue);
     currentOperator = value;
     displayValue = "0";
@@ -157,7 +164,11 @@ function sendToDisplay(value){
  }else if (lastOperator != "" && (value == "+" || value == "-" || value == "/" || value == "*"|| value == "=" )){
    displayValue = document.getElementById("displayValue").innerHTML;
    secondNumber = parseFloat(displayValue);
-   firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
+   if((firstNumber > -1 || firstNumber < 1 ) && (firstNumber <= -0.00001 || firstNumber >= 0.00001)){
+     firstNumber = parseFloat(roundResult(operate(lastOperator,firstNumber,secondNumber)));
+   }else{
+     firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
+   }
    document.getElementById("displayValue").innerHTML = firstNumber;
    lastOperator = "";
 
@@ -181,6 +192,7 @@ function sendToDisplay(value){
  }else if ((value == "+" || value == "-" || value == "/" || value == "*")){
     currentOperator = value;
     displayValue = "0";
+    secondNumber = 0;
     console.log("----------");
     console.log("2nd");
     console.log("firstNumber:");
@@ -195,6 +207,7 @@ function sendToDisplay(value){
     console.log(lastOperator);
   }else if (value == "=" && currentOperator == "" && firstNumber == 0 && secondNumber == 0){
       document.getElementById("displayValue").innerHTML = parseFloat(displayValue);
+
       console.log("----------");
       console.log("3rd");
       console.log("firstNumber:");
@@ -224,8 +237,12 @@ function sendToDisplay(value){
   }else if (currentOperator == lastOperator && value == "="){
     lastOperator = currentOperator;
     secondNumber = parseFloat(displayValue);
-    firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
-    document.getElementById("displayValue").innerHTML = firstNumber ;
+    if((firstNumber > -1 || firstNumber < 1 )&& (firstNumber <= -0.00001 || firstNumber >= 0.00001)){
+      firstNumber = parseFloat(roundResult(operate(lastOperator,firstNumber,secondNumber)));
+    }else{
+      firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
+    }
+    document.getElementById("displayValue").innerHTML = firstNumber;
     lastOperator = "";
     console.log("----------");
     console.log("5th");
@@ -243,8 +260,12 @@ function sendToDisplay(value){
   }else if (value == "="){
     lastOperator = currentOperator;
     displayValue = document.getElementById("displayValue").innerHTML;
-    firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
-    document.getElementById("displayValue").innerHTML = firstNumber ;
+    if((firstNumber > -1 || firstNumber < 1) && (firstNumber <= -0.00001 || firstNumber >= 0.00001)){
+      firstNumber = parseFloat(roundResult(operate(lastOperator,firstNumber,secondNumber)));
+    }else{
+      firstNumber = parseFloat(operate(lastOperator,firstNumber,secondNumber));
+    }
+    document.getElementById("displayValue").innerHTML = firstNumber;
     lastOperator = "";
     console.log("----------");
     console.log("6th");
@@ -258,6 +279,8 @@ function sendToDisplay(value){
     console.log(currentOperator);
     console.log("lastOperator:");
     console.log(lastOperator);
+    console.log("decimal:");
+    console.log(decimal);
 
   }else if (displayValue == "0" && value !="DEL" && value !="." && (value == "+"
    || value == "-" || value == "/" || value == "*"|| value == "=" || value >= 0
@@ -299,7 +322,7 @@ function sendToDisplay(value){
     console.log(currentOperator);
     console.log("lastOperator:");
     console.log(lastOperator);
- }else if (displayValue.length <= maxLength && parseFloat(displayValue) != secondNumber && (value >= 0 || value <10 )){
+ }else if (displayValue.length < maxLength && parseFloat(displayValue) != secondNumber && (value >= 0 || value <10 )){
     document.getElementById("displayValue").innerHTML += value;
     displayValue = document.getElementById("displayValue").innerHTML;
     lastOperator = currentOperator;
@@ -354,7 +377,7 @@ function sendToDisplay(value){
      console.log("lastOperator:");
      console.log(lastOperator);
 
-   }else if (!displayValue.includes(".") && parseFloat(displayValue) != secondNumber &&  value == "."){
+   }else if (!displayValue.includes(".") && displayValue=="0" &&parseFloat(displayValue) != secondNumber &&  value == "."){
       document.getElementById("displayValue").innerHTML += value;
       displayValue = document.getElementById("displayValue").innerHTML;
       lastOperator = currentOperator;
@@ -370,7 +393,7 @@ function sendToDisplay(value){
       console.log(currentOperator);
       console.log("lastOperator:");
       console.log(lastOperator);
-    }else if (!displayValue.includes(".") && firstNumber==0 && displayValue == "0" &&  value == "."){
+    }else if (!displayValue.includes(".") && firstNumber==0  &&  value == "."){
        document.getElementById("displayValue").innerHTML += value;
        displayValue = document.getElementById("displayValue").innerHTML;
        lastOperator = currentOperator;
@@ -402,7 +425,102 @@ function sendToDisplay(value){
         console.log(currentOperator);
         console.log("lastOperator:");
         console.log(lastOperator);
+      }else if (!displayValue.includes(".") &&  value == "."){
+         document.getElementById("displayValue").innerHTML = "0" + value;
+         displayValue = document.getElementById("displayValue").innerHTML;
+         currentOperator = "";
+         lastOperator = "";
+         firstNumber = 0;
+         secondNumber = 0;
+         console.log("----------");
+         console.log("15th");
+         console.log("firstNumber:");
+         console.log(firstNumber);
+         console.log("secondNumber:");
+         console.log(secondNumber);
+         console.log("displayValue:");
+         console.log(displayValue);
+         console.log("currentOperator:");
+         console.log(currentOperator);
+         console.log("lastOperator:");
+         console.log(lastOperator);
   }
+
   calcMaxLength();
-  displayMaxLength();
+//  displayMaxLength();
+
+  if(firstNumber >9999999999){
+    let i = 0;
+    let displayValueMultiplied;
+    do {
+      displayValueMultiplied = firstNumber / Math.pow(10, i);
+      console.log("displayValueMultiplied");
+      console.log(displayValueMultiplied);
+      i++;
+    } while (displayValueMultiplied >= 1);
+
+   document.getElementById("displayValueMultiplier").innerHTML = i-1;
+   let multipliedResult =firstNumber/Math.pow(10, i-2);
+   console.log("multipliedResult");
+   console.log(multipliedResult);
+   let multipliedResultString=multipliedResult.toString();
+   console.log("multipliedResultString");
+   console.log(multipliedResultString);
+   let multipliedResultNumber = parseFloat(multipliedResultString.substring(0, Math.min(multipliedResultString.length, 11)));
+   console.log("multipliedResultNumber");
+   console.log(multipliedResultNumber);
+   let multipliedResultNumberFixed = multipliedResultNumber.toString()
+   console.log("multipliedResultNumberFixed");
+   console.log(multipliedResultNumberFixed);
+   document.getElementById("displayValue").innerHTML = multipliedResultNumberFixed;
+
+  }else if( firstNumber> -0.00001 && firstNumber<0  &&firstNumber!=0){
+    let i = 0;
+    let displayValueMultiplied;
+    do {
+      displayValueMultiplied = firstNumber * Math.pow(10, i);
+      i++;
+    } while (displayValueMultiplied > -10);
+
+   document.getElementById("displayValueMultiplier").innerHTML = -i + 2;
+   let multipliedResult =firstNumber*Math.pow(10, i-2);
+   console.log("multipliedResult");
+   console.log(multipliedResult);
+   let multipliedResultString=multipliedResult.toString();
+   console.log("multipliedResultString");
+   console.log(multipliedResultString);
+   let multipliedResultNumber = parseFloat(multipliedResultString.substring(0, Math.min(multipliedResultString.length, 11)));
+   console.log("multipliedResultNumber");
+   console.log(multipliedResultNumber);
+   let multipliedResultNumberFixed = multipliedResultNumber.toString()
+   console.log("multipliedResultNumberFixed");
+   console.log(multipliedResultNumberFixed);
+   document.getElementById("displayValue").innerHTML = multipliedResultNumberFixed;
+
+  }else if(firstNumber<0.00001 && firstNumber>0 &&firstNumber!=0){
+    let i = 0;
+    let displayValueMultiplied;
+    do {
+      displayValueMultiplied = firstNumber * Math.pow(10, i);
+      console.log("displayValueMultiplied-3");
+      console.log(displayValueMultiplied);
+      i++;
+    } while (displayValueMultiplied < 10);
+
+   document.getElementById("displayValueMultiplier").innerHTML = -i + 2;
+   let multipliedResult =firstNumber*Math.pow(10, i-2);
+   console.log("multipliedResult-3");
+   console.log(multipliedResult);
+   let multipliedResultString=multipliedResult.toString();
+   console.log("multipliedResultString-3");
+   console.log(multipliedResultString);
+   let multipliedResultNumber = parseFloat(multipliedResultString.substring(0, Math.min(multipliedResultString.length, 11)));
+   console.log("multipliedResultNumber-3");
+   console.log(multipliedResultNumber);
+   let multipliedResultNumberFixed = multipliedResultNumber.toString()
+   console.log("multipliedResultNumberFixed-3");
+   console.log(multipliedResultNumberFixed);
+   document.getElementById("displayValue").innerHTML = multipliedResultNumberFixed;
+  }
+
 }
